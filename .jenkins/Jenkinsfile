@@ -33,6 +33,7 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '90',
 
 try {
     oe.emailJobStatus('STARTED')
+    println "FTS:" + FULL_TEST_SUITE
     parallel (
       "Agnostic Linux" : {
           build job: '/pipelines/Agnostic-Linux',
