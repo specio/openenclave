@@ -104,6 +104,8 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '90',
 
 try{
     oe.emailJobStatus('STARTED')
+    println "Checkin FULL_TEST_SUITE"
+    println FULL_TEST_SUITE
     if(FULL_TEST_SUITE == "true") {
       stage("Full Test Suite") {
         parallel "Check CI" :                                               { checkCI() },
