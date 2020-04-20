@@ -16,6 +16,7 @@ FULL_TEST_SUITE = env.FULL_TEST_SUITE ?: false
 AGENTS_LABELS = [
     "acc-ubuntu-16.04": env.UBUNTU_1604_CUSTOM_LABEL ?: "ACC-1604",
     "acc-ubuntu-18.04": env.UBUNTU_1804_CUSTOM_LABEL ?: "ACC-1804",
+    "ubuntu-sgx":    env.UBUNTU_SGX_CUSTOM_LABEL ?: "SGX",
     "ubuntu-nonsgx":    env.UBUNTU_NONSGX_CUSTOM_LABEL ?: "nonSGX",
     "acc-rhel-8":       env.RHEL_8_CUSTOM_LABEL ?: "ACC-RHEL-8",
     "acc-win2016":      env.WINDOWS_2016_CUSTOM_LABEL ?: "SGX-Windows-2016",
@@ -41,6 +42,15 @@ try {
                              string(name: 'BRANCH_NAME', value: BRANCH_NAME),
                              string(name: 'DOCKER_TAG', value: DOCKER_TAG),
                              string(name: 'UBUNTU_NONSGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-nonsgx"]),
+                             string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
+                             booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
+       },
+        "Agnostic LinuxSGX" : {
+          build job: '/pipelines/Agnostic-LinuxSGX',
+                parameters: [string(name: 'REPOSITORY_NAME', value: REPOSITORY_NAME),
+                             string(name: 'BRANCH_NAME', value: BRANCH_NAME),
+                             string(name: 'DOCKER_TAG', value: DOCKER_TAG),
+                             string(name: 'UBUNTU_SGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgx"]),
                              string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
                              booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
        },
