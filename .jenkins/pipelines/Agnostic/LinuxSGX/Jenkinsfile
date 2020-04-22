@@ -37,7 +37,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ninja -v
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
-                    oe.Run("clang-7", task, "--cap-add=SYS_PTRACE")
+                    oe.Run("clang-7", task)
                 }
             }
         }
@@ -60,7 +60,7 @@ def AArch64GNUTest(String version, String build_type) {
                                 -Wdev
                             ninja -v
                             """
-                oe.Run("cross", task, "--cap-add=SYS_PTRACE")
+                oe.Run("cross", task)
             }
         }
     }
@@ -76,7 +76,7 @@ def checkDevFlows(String version) {
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
-                oe.Run("clang-7", task, "--cap-add=SYS_PTRACE")
+                oe.Run("clang-7", task)
             }
         }
     }
@@ -90,7 +90,7 @@ def checkCI() {
                 checkout scm
                 // At the moment, the check-ci script assumes that it's executed from the
                 // root source code directory.
-                oe.Run("clang-7", "cd ${WORKSPACE} && ./scripts/check-ci", "--cap-add=SYS_PTRACE")
+                oe.Run("clang-7", "cd ${WORKSPACE} && ./scripts/check-ci")
             }
         }
     }
