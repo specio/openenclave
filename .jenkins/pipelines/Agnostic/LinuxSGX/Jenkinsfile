@@ -38,7 +38,6 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
                     oe.Run("clang-7", task, "--cap-add=SYS_PTRACE")
-                    echo "done bare metal build&test"
                 }
             }
         }
@@ -61,7 +60,7 @@ def AArch64GNUTest(String version, String build_type) {
                                 -Wdev
                             ninja -v
                             """
-                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "cross", task, "--cap-add=SYS_PTRACE")
+                oe.Run("cross", task, "--cap-add=SYS_PTRACE")
             }
         }
     }
@@ -77,7 +76,7 @@ def checkDevFlows(String version) {
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
-                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE")
+                oe.Run("clang-7", task, "--cap-add=SYS_PTRACE")
             }
         }
     }
@@ -91,6 +90,7 @@ def checkCI() {
                 checkout scm
                 // At the moment, the check-ci script assumes that it's executed from the
                 // root source code directory.
+                oe.Run("clang-7", "cd ${WORKSPACE} && ./scripts/check-ci", "--cap-add=SYS_PTRACE")
             }
         }
     }
@@ -108,16 +108,21 @@ try{
       stage("Full Test Suite") {
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
+                 "AArch64 1804 GNU gcc Debug" :                             { AArch64GNUTest('18.04', 'Debug')},
                  "AArch64 1804 GNU gcc Release" :                           { AArch64GNUTest('18.04', 'Release')},
+                 "Sim 1804 clang-7 SGX1 Debug" :                            { simulationTest('18.04', 'SGX1', 'Debug')},
                  "Sim 1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release')},
+                 "Sim 1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug')},
                  "Sim 1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release')}
       }
     } else {
       stage("PR Testing") {
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
+                 "AArch64 1804 GNU gcc Debug" :                             { AArch64GNUTest('18.04', 'Debug')},
                  "AArch64 1804 GNU gcc Release" :                           { AArch64GNUTest('18.04', 'Release')},
                  "Sim 1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release', 'ON')},
+                 "Sim 1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug', 'ON')},
                  "Sim 1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release', 'ON')}
       }
     }
