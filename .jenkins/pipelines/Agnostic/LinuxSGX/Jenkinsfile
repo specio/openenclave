@@ -106,18 +106,18 @@ try{
       stage("Full Test Suite") {
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
-                 "Sim 1804 clang-7 SGX1 Debug" :                            { simulationTest('18.04', 'SGX1', 'Debug')},
-                 "Sim 1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release')},
-                 "Sim 1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug')},
-                 "Sim 1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release')}
+                 "1804 clang-7 SGX1 Debug" :                            { simulationTest('18.04', 'SGX1', 'Debug')},
+                 "1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release')},
+                 "1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug')},
+                 "1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release')}
       }
     } else {
       stage("PR Testing") {
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
-                 "Sim 1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release', 'ON')},
-                 "Sim 1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug', 'ON')},
-                 "Sim 1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release', 'ON')}
+                 "1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release', 'ON')},
+                 "1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug', 'ON')},
+                 "1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release', 'ON')}
       }
     }
 } catch(Exception e) {
