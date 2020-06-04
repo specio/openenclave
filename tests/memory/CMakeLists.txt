@@ -8,3 +8,4 @@ if (BUILD_ENCLAVES)
 endif()
 
 add_enclave_test(tests/memory memory_host memory_enc)
+set_enclave_tests_properties(tests/memory PROPERTIES SKIP_RETURN_CODE 2)
