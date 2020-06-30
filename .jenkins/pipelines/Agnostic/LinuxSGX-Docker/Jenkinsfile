@@ -10,7 +10,7 @@ GLOBAL_ERROR = null
 
 DOCKER_TAG = env.DOCKER_TAG ?: "latest"
 AGENTS_LABELS = [
-    "ubuntu-sgx":    env.UBUNTU_SGX_CUSTOM_LABEL ?: "SGX"
+    "ubuntu-sgx":    "ununtu-sgx-docker" ?: "SGX"
 ]
 
 
