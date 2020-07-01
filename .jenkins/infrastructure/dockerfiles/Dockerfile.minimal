@@ -12,15 +12,15 @@ ARG GID=1000
 
 COPY ./ /oe
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y lsb-release wget ca-certificates git && \
-    cd /oe/scripts/ansible && \
-    export http_proxy=http://proxy-mu.intel.com:911 && \
+RUN export http_proxy=http://proxy-mu.intel.com:911 && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y lsb-release wget ca-certificates git && \
+    cd /oe/scripts/ansible && \ 
     ./install-ansible.sh && \
     ansible localhost --playbook-dir=/oe/scripts/ansible -m import_role -a "name=linux/openenclave tasks_from=environment-setup.yml" -vvv && \
     ./remove-ansible.sh && \
     cd / && \
     rm -rf /oe && \
-    groupadd --gid ${GID} ${GNAME} && \
-    useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME}
+    #groupadd --gid ${GID} ${GNAME} && \
+    #useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME}
