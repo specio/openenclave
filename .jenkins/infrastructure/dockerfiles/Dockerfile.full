@@ -59,6 +59,8 @@ COPY ./ /oe
 
 ARG devkits_uri
 RUN cd /oe/scripts/ansible && \
+    export http_proxy=http://proxy-mu.intel.com:911 && \
+    export https_proxy=http://proxy-mu.intel.com:912 && \
     ./install-ansible.sh && \
     ansible localhost --playbook-dir=/oe/scripts/ansible -m import_role -a "name=linux/docker tasks_from=ci-setup.yml" -vvv && \
     ./remove-ansible.sh && \
