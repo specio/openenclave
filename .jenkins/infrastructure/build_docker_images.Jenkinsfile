@@ -6,7 +6,7 @@ oe = library("OpenEnclaveCommon@${OECI_LIB_VERSION}").jenkins.common.Openenclave
 
 GLOBAL_TIMEOUT_MINUTES = 240
 
-OETOOLS_REPO = "https://oejenkinscidockerregistry.azurecr.io"
+OETOOLS_REPO = "https://oenc-jenkins.sclab.intel.com:5000"
 OETOOLS_REPO_CREDENTIAL_ID = "oejenkinscidockerregistry"
 OETOOLS_DOCKERHUB_REPO_CREDENTIAL_ID = "oeciteamdockerhub"
 
@@ -36,7 +36,7 @@ def buildDockerImages() {
                 puboeDeploy = oe.dockerImage("oeciteam/oetools-deploy:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.deploy", buildArgs)
             }
             stage("Push to OE Docker Registry") {
-                docker.withRegistry(OETOOLS_REPO, OETOOLS_REPO_CREDENTIAL_ID) {
+                docker.withRegistry(OETOOLS_REPO) {
                     oe.exec_with_retry { oefull1604.push() }
                     oe.exec_with_retry { oefull1804.push() }
                     oe.exec_with_retry { oeminimal1804.push() }
