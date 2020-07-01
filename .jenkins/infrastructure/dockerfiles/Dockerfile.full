@@ -71,6 +71,10 @@ RUN cd /oe/scripts/ansible && \
     #git config --global user.name "OE CI Team" && \
     getent group && \
     #groupadd --gid ${GID} ${GNAME} && \
+    echo "gid:"
+    echo ${GID}
+    echo "gname:"
+    echo ${GNAME}
     groupadd --gid 1000 jenkins && \
     useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME} && \
     curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner && \
