@@ -11,7 +11,7 @@ OETOOLS_REPO_CREDENTIAL_ID = "oejenkinscidockerregistry"
 OETOOLS_DOCKERHUB_REPO_CREDENTIAL_ID = "oeciteamdockerhub"
 
 def buildDockerImages() {
-    node(params.AGENTS_LABEL) {
+    node("dockerNUC") {
         timeout(GLOBAL_TIMEOUT_MINUTES) {
             stage("Checkout") {
                 cleanWs()
