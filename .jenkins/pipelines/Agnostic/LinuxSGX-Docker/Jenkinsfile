@@ -36,6 +36,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ninja -v
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
+                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE")
                     oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE")
             }
         }
