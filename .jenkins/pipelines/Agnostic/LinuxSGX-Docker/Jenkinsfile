@@ -75,6 +75,7 @@ def checkDevFlows(String version) {
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
+                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE")
                 oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE")
             }
         }
