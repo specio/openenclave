@@ -70,9 +70,9 @@ RUN cd /oe/scripts/ansible && \
     git config --global user.email "oeciteam@microsoft.com" && \
     git config --global user.name "OE CI Team" && \
     getent group && \
-    #groupadd --gid ${GID} ${GNAME} && \
-    #useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME} && \
+    groupadd --gid ${GID} ${GNAME} && \
+    useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME} && \
     curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner && \
     echo ${devkits_uri##*/} > /devkits/TARBALL && \
     cat /etc/sudoers
-    #echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
