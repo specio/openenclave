@@ -36,8 +36,8 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ninja -v
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
-                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE --env HTTP_PROXY=http://proxy-mu.intel.com:911")
-                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTP_PROXY=http://proxy-mu.intel.com:911")
+                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $https_proxy", "--cap-add=SYS_PTRACE")
+                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
             }
         }
     }
@@ -75,8 +75,8 @@ def checkDevFlows(String version) {
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
-                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE --env HTTP_PROXY=http://proxy-mu.intel.com:911")
-                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTP_PROXY=http://proxy-mu.intel.com:911")
+                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE")
+                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
             }
         }
     }
