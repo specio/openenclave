@@ -60,23 +60,26 @@ COPY ./ /oe
 ARG devkits_uri
 RUN whoami && \
     pwd && \
+    echo "http_proxy=http://proxy-mu.intel.com:911/" >> /etc/environment && \
+    echo "https_proxy=http://proxy-mu.intel.com:912/" >> /etc/environment
+RUN echo proxxxxy: $http_proxy && \
     export http_proxy=http://proxy-mu.intel.com:911 && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
     apt update && \
     apt upgrade -y && \
     apt install -y linux-headers-$(uname -r) && \
+    apt install sudo -y && \
     cd /oe/scripts/ansible && \
     pwd && \
     ls -la && \
-    ./install-ansible.sh && \
-    ansible localhost --playbook-dir=/oe/scripts/ansible -m import_role -a "name=linux/openenclave tasks_from=environment-setup.yml" -vvv && \
-    ansible-playbook ./oe-contributors-setup.yml -vvv && \
+    sudo ./install-ansible.sh && \
+    sudo ansible-playbook ./oe-contributors-setup.yml -vvvv && \
     ./remove-ansible.sh && \
     cd / && \
     rm -rf /oe && \
     # Configure Git in target image to enable merge/rebase actions.
-    git config --global user.email "oeciteam@microsoft.com" && \
-    git config --global user.name "OE CI Team" && \
+    #git config --global user.email "oeciteam@microsoft.com" && \
+    #git config --global user.name "OE CI Team" && \
     getent group && \
     groupadd --gid ${GID} ${GNAME} && \
     useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME} && \
@@ -84,3 +87,4 @@ RUN whoami && \
     echo ${devkits_uri##*/} > /devkits/TARBALL && \
     cat /etc/sudoers && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
