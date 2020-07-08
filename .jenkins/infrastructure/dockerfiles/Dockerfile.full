@@ -62,7 +62,7 @@ RUN cd /oe/scripts/ansible && \
     export http_proxy=http://proxy-mu.intel.com:911 && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
     ./install-ansible.sh && \
-    ansible localhost --playbook-dir=/oe/scripts/ansible -m import_role -a "name=linux/docker tasks_from=ci-setup.yml" -vvv && \
+    ansible-playbook scripts/ansible/oe-contributors-setup.yml -vvv && \
     ./remove-ansible.sh && \
     cd / && \
     rm -rf /oe && \
