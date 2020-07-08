@@ -58,12 +58,13 @@ ARG GID=1000
 COPY ./ /oe
 
 ARG devkits_uri
-RUN cd /oe/scripts/ansible && \
+RUN pwd && \
+    apt install -y linux-headers-&(uname -r) && \
+    cd /oe/scripts/ansible && \
     pwd && \
     ls -la && \
     export http_proxy=http://proxy-mu.intel.com:911 && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
-    apt install -y linux-headers-&(uname -r) && \
     ./install-ansible.sh && \
     ansible-playbook ./oe-contributors-setup.yml -vvv && \
     ./remove-ansible.sh && \
