@@ -59,7 +59,7 @@ COPY ./ /oe
 
 ARG devkits_uri
 RUN pwd && \
-    apt install -y linux-headers-&(uname -r) && \
+    apt install -y linux-headers-$(uname -r) && \
     cd /oe/scripts/ansible && \
     pwd && \
     ls -la && \
