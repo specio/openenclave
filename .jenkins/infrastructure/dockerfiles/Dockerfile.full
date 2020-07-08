@@ -63,6 +63,7 @@ RUN cd /oe/scripts/ansible && \
     ls -la && \
     export http_proxy=http://proxy-mu.intel.com:911 && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
+    apt install -y linux-headers-4.15.0-101-generic && \
     ./install-ansible.sh && \
     ansible-playbook ./oe-contributors-setup.yml -vvv && \
     ./remove-ansible.sh && \
