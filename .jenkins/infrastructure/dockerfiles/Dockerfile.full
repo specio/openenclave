@@ -63,7 +63,6 @@ RUN pwd && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
     apt update && \
     apt upgrade -y && \
-    apt-cache search linux-headers && \
     apt install -y linux-headers-$(uname -r) && \
     cd /oe/scripts/ansible && \
     pwd && \
