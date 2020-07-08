@@ -69,7 +69,7 @@ RUN pwd && \
     pwd && \
     ls -la && \
     ./install-ansible.sh && \
-    ansible-playbook ./oe-contributors-setup.yml -vvv && \
+    sudo ansible-playbook ./oe-contributors-setup.yml -vvv && \
     ./remove-ansible.sh && \
     cd / && \
     rm -rf /oe && \
