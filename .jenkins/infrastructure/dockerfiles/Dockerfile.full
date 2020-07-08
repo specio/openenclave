@@ -64,11 +64,12 @@ RUN whoami && \
     export https_proxy=http://proxy-mu.intel.com:912 && \
     apt update && \
     apt upgrade -y && \
-    apt install -y linux-headers-$(uname -r)
-RUN cd /oe/scripts/ansible && \
+    apt install -y linux-headers-$(uname -r) && \
+    cd /oe/scripts/ansible && \
     pwd && \
     ls -la && \
     ./install-ansible.sh && \
+    ansible localhost --playbook-dir=/oe/scripts/ansible -m import_role -a "name=linux/openenclave tasks_from=environment-setup.yml" -vvv && \
     ansible-playbook ./oe-contributors-setup.yml -vvv && \
     ./remove-ansible.sh && \
     cd / && \
