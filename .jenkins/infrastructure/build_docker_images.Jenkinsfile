@@ -49,20 +49,6 @@ def buildDockerImages() {
                     }
                 }
             }
-            stage("Push to OE Docker Hub Registry") {
-                docker.withRegistry('', OETOOLS_DOCKERHUB_REPO_CREDENTIAL_ID) {
-                    if(TAG_LATEST == "true") {
-                        oe.exec_with_retry { puboefull1604.push() }
-                        oe.exec_with_retry { puboefull1804.push() }
-                        oe.exec_with_retry { puboeminimal1804.push() }
-                        oe.exec_with_retry { puboeDeploy.push() }
-                        oe.exec_with_retry { puboefull1604.push('latest') }
-                        oe.exec_with_retry { puboefull1804.push('latest') }
-                        oe.exec_with_retry { puboeminimal1804.push('latest') }
-                        oe.exec_with_retry { puboeDeploy.push('latest') }
-                    }
-                }
-            }
         }
     }
 }
