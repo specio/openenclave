@@ -36,8 +36,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ninja -v
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
-                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $https_proxy", "--cap-add=SYS_PTRACE")
-                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
+                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--device /dev/sgx --device /dev/mei0 --cap-add=SYS_PTRACE --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
             }
         }
     }
