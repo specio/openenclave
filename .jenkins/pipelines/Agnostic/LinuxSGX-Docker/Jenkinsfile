@@ -74,7 +74,6 @@ def checkDevFlows(String version) {
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
-                oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", "echo proxxy: $http_proxy", "--cap-add=SYS_PTRACE")
                 oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--cap-add=SYS_PTRACE --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
             }
         }
@@ -85,15 +84,11 @@ def checkCI() {
     stage('Check CI') {
         node(AGENTS_LABELS["ubuntu-sgx"]) {
             timeout(GLOBAL_TIMEOUT_MINUTES) {
-                println "!!!BEFORE CLEAN!!!"
                 cleanWs()
-                println "!!!AFTER CLEAN!!!"
                 checkout scm
-                println "!!!AFTER SCM!!!"
                 // At the moment, the check-ci script assumes that it's executed from the
                 // root source code directory.
                 oe.ContainerRun("oetools-minimal-18.04:${DOCKER_TAG}", "clang-7", "cd ${WORKSPACE} && ./scripts/check-ci", "--cap-add=SYS_PTRACE")
-                println "!!!AFTER CT-RUN!!!"
             }
         }
     }
