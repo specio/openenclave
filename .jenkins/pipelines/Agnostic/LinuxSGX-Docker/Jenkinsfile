@@ -25,6 +25,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 cleanWs()
                 checkout scm
                     def task = """
+                               whoami \
                                cmake ${WORKSPACE}                                            \
                                     -G Ninja                                                 \
                                     -DCMAKE_BUILD_TYPE=${build_type}                         \
@@ -71,6 +72,7 @@ def checkDevFlows(String version) {
                 cleanWs()
                 checkout scm
                 def task = """
+                           whoami \
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
