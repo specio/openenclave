@@ -25,7 +25,6 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 cleanWs()
                 checkout scm
                     def task = """
-                               whoami
                                pm2 resurrect
                                cmake ${WORKSPACE}                                            \
                                     -G Ninja                                                 \
