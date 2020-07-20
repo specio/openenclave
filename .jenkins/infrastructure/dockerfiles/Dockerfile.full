@@ -57,7 +57,7 @@ ARG GID=1000
 
 COPY ./ /oe
 
-ARG devkits_uri
+#ARG devkits_uri
 RUN whoami && \
     pwd && \
     echo "http_proxy=http://proxy-mu.intel.com:911/" >> /etc/environment && \
@@ -70,11 +70,7 @@ RUN echo proxxxxy: $http_proxy && \
     apt install -y linux-headers-$(uname -r) && \
     apt install sudo -y && \
     getent group && \
-    groupadd --gid ${GID} ${GNAME} && \
-    useradd --create-home --uid ${UID} --gid ${GID} --shell /bin/bash ${UNAME} && \
     cd /oe/scripts/ansible && \
-    pwd && \
-    ls -la && \
     sudo ./install-ansible.sh && \
     sudo ansible-playbook ./oe-contributors-setup.yml -vvvv && \
     ./remove-ansible.sh && \
@@ -83,7 +79,28 @@ RUN echo proxxxxy: $http_proxy && \
     # Configure Git in target image to enable merge/rebase actions.
     #git config --global user.email "oeciteam@microsoft.com" && \
     #git config --global user.name "OE CI Team" && \
-    curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner && \
-    echo ${devkits_uri##*/} > /devkits/TARBALL && \
+    #curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner && \
+    #echo ${devkits_uri##*/} > /devkits/TARBALL && \
     cat /etc/sudoers && \
-    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    apt install libsgx-dcap-default-qpl && \
+    ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
+    ln -s /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so.1.7.100.2 /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
+    sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
+    cat /etc/sgx_default_qcnl.conf && \
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash && \
+    apt-get install -y nodejs && \
+    echo "N" |  sudo apt install sgx-dcap-pccs -y && \
+    sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
+    mkdir $sslDir && \
+    openssl genrsa -out $sslDir/private.pem 1024 && \
+    sudo openssl req -new -subj "/C=PL/ST=POM/L=GDA/O=INTEL/OU=S3/CN=OE" -key $sslDir/private.pem -out $sslDir/csr.pem && \
+    sudo openssl x509 -req -days 365 -in $sslDir/csr.pem -signkey $sslDir/private.pem -out $sslDir/file.crt && \
+    token=48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5 && \
+    sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "UserToken" : ""/    "UserToken" : "$token"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "$token"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    cd $sslDir/.. && \
+    pm2 start ./pccs_server.config.js && \
+    pm2 save
