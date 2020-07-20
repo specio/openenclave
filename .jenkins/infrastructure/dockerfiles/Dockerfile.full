@@ -96,11 +96,10 @@ RUN echo proxxxxy: $http_proxy && \
     openssl genrsa -out $sslDir/private.pem 1024 && \
     sudo openssl req -new -subj "/C=PL/ST=POM/L=GDA/O=INTEL/OU=S3/CN=OE" -key $sslDir/private.pem -out $sslDir/csr.pem && \
     sudo openssl x509 -req -days 365 -in $sslDir/csr.pem -signkey $sslDir/private.pem -out $sslDir/file.crt && \
-    token=48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5 && \
     sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
     sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-    sed -i 's/^    "UserToken" : ""/    "UserToken" : "$token"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "$token"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
     cd $sslDir/.. && \
     pm2 start ./pccs_server.config.js && \
     pm2 save
