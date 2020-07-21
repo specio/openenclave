@@ -26,7 +26,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 checkout scm
                     def task = """
                                echo "======================================================================="
-                               echo "Running:     $STAGE_NAME
+                               echo "Running:     $STAGE_NAME"
                                echo "-----------------------------------------------------------------------"
                                echo "User:        \$(whoami)"
                                echo "Agent:       $NODE_NAME - Docker Container( $HOSTNAME )"
@@ -82,7 +82,7 @@ def checkDevFlows(String version) {
                 checkout scm
                 def task = """
                            echo "======================================================================="
-                           echo "Running:     $STAGE_NAME
+                           echo "Running:     $STAGE_NAME"
                            echo "-----------------------------------------------------------------------"
                            echo "User:        \$(whoami)"
                            echo "Agent:       $NODE_NAME - Docker Container( $HOSTNAME )"
