@@ -25,11 +25,14 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 cleanWs()
                 checkout scm
                     def task = """
+                               echo =======================================================================
+                               echo User:        $(whoami)
+                               echo Agent:       $(hostname)
+                               echo http_proxy:  $http_proxy
+                               echo https_proxy: $https_proxy
+                               echo no_proxy:    $no_proxy
+                               echo =======================================================================
                                pm2 resurrect
-                               echo User: $(whoami)
-                               echo $http_proxy
-                               echo $https_proxy
-                               echo $no_proxy
                                cmake ${WORKSPACE}                                            \
                                     -G Ninja                                                 \
                                     -DCMAKE_BUILD_TYPE=${build_type}                         \
@@ -76,7 +79,13 @@ def checkDevFlows(String version) {
                 cleanWs()
                 checkout scm
                 def task = """
-                           whoami
+                           echo =======================================================================
+                           echo User:        $(whoami)
+                           echo Agent:       $(hostname)
+                           echo http_proxy:  $http_proxy
+                           echo https_proxy: $https_proxy
+                           echo no_proxy:    $no_proxy
+                           echo =======================================================================
                            cmake ${WORKSPACE} -G Ninja -DHAS_QUOTE_PROVIDER=OFF -Wdev --warn-uninitialized -Werror=dev
                            ninja -v
                            """
