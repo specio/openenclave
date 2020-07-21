@@ -26,6 +26,10 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 checkout scm
                     def task = """
                                pm2 resurrect
+                               echo whoami
+                               echo $http_proxy
+                               echo $https_proxy
+                               echo $no_proxy
                                cmake ${WORKSPACE}                                            \
                                     -G Ninja                                                 \
                                     -DCMAKE_BUILD_TYPE=${build_type}                         \
@@ -37,7 +41,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                                ninja -v
                                ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
                                """
-                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--device /dev/sgx --device /dev/mei0 --cap-add=SYS_PTRACE --user=root --env HTTPS_PROXY=http://proxy-mu.intel.com:912")
+                    oe.ContainerRun("oetools-full-${version}:${DOCKER_TAG}", "clang-7", task, "--device /dev/sgx --device /dev/mei0 --cap-add=SYS_PTRACE --user=root --env https_proxy=http://proxy-mu.intel.com:912 --env http_proxy=http://proxy-mu.intel.com:911 --env no_proxy=intel.com,.intel.com,localhost")
             }
         }
     }
