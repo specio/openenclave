@@ -26,8 +26,8 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
                 checkout scm
                     def task = """
                                echo =======================================================================
-                               echo User:        $(whoami)
-                               echo Agent:       $(hostname)
+                               echo User:        \$(whoami)
+                               echo Agent:       \$(hostname)
                                echo http_proxy:  $http_proxy
                                echo https_proxy: $https_proxy
                                echo no_proxy:    $no_proxy
@@ -80,8 +80,8 @@ def checkDevFlows(String version) {
                 checkout scm
                 def task = """
                            echo =======================================================================
-                           echo User:        $(whoami)
-                           echo Agent:       $(hostname)
+                           echo User:        \$(whoami)
+                           echo Agent:       \$(hostname)
                            echo http_proxy:  $http_proxy
                            echo https_proxy: $https_proxy
                            echo no_proxy:    $no_proxy
