@@ -205,9 +205,9 @@ void enc_relinquish_exclusive_access_cxx()
     std::cout << ss.str();
 }
 
-static std::mutex mutex_a;
-static std::mutex mutex_b;
-static std::mutex mutex_c;
+static std::recursive_mutex mutex_a;
+static std::recursive_mutex mutex_b;
+static std::recursive_mutex mutex_c;
 
 static std::thread::id dummy_owner;
 static std::thread::id a_owner;
@@ -227,7 +227,7 @@ void enc_lock_and_unlock_mutexes_cxx(const char* mutexes)
 
     const char m = mutexes[0];
 
-    std::mutex* mutex = nullptr;
+    std::recursive_mutex* mutex = nullptr;
     int* locks = nullptr;
     std::thread::id* owner = &dummy_owner;
 
@@ -297,7 +297,7 @@ void enc_lock_and_unlock_mutexes_cxx(const char* mutexes)
 OE_SET_ENCLAVE_SGX(
     1,    /* ProductID */
     1,    /* SecurityVersion */
-    true, /* AllowDebug */
-    128,  /* HeapPageCount */
-    16,   /* StackPageCount */
-    16);  /* TCSCount */
+    true, /* Debug */
+    128,  /* NumHeapPages */
+    16,   /* NumStackPages */
+    16);  /* NumTCS */

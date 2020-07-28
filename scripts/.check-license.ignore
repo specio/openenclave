@@ -32,6 +32,8 @@ tests/mbed/tests\..*$
 3rdparty/dlmalloc/dlmalloc/.*
 3rdparty/libcxx/libcxx/.*
 3rdparty/libcxxrt/libcxxrt/.*
+3rdparty/libgcov/compiler-rt/.*
+3rdparty/libgcov/patches/.*
 3rdparty/libunwind/libunwind/.*
 3rdparty/mbedtls/mbedtls/.*
 3rdparty/musl/libc-test/.*
@@ -41,12 +43,14 @@ tests/mbed/tests\..*$
 3rdparty/optee/optee_os/.*
 devex/vsextension/ItemTemplates/.*
 devex/vsextension/ProjectTemplates/.*
-tools/oeedger8r/esy\.lock/.*
-tools/oeedger8r/intel/.*
+tools/oeedger8r-cpp/*
+tests/libcxxrt/results/.*
 tests/print/results/.*
+docs/*
 
 # Files
 3rdparty/LICENSES
+3rdparty/libgcov/compiler-rt
 3rdparty/libunwind/setcontext\.S
 3rdparty/mbedtls/config\.h
 3rdparty/musl/COPYRIGHT
@@ -56,6 +60,7 @@ tests/print/results/.*
 3rdparty/optee/optee_os
 3rdparty/snmalloc
 cmake/NuGetDescription.txt
+cmake/HostVerifyNuGetDescription.txt
 devex/vscode-extension/.vscodeignore
 devex/vscode-extension/assets/devkit/devdata.tar.gz
 devex/vscode-extension/assets/edgeSolutionTemplateFolder/modules/\[\[project-name\]\]/Dockerfile.aarch64-qemu
@@ -76,11 +81,9 @@ debugger/pythonExtension/readelf\.py
 host/linux/pe\.h
 include/openenclave/internal/queue\.h
 samples/file-encryptor/testfile
+scripts/llvm-gcov
 tests/ocall/debugging\.txt
 tests/str/test1\.txt
-tools/oeedger8r/src/\.ocamlformat
-tools/oeedger8r/src/\.ocamlformat-ignore
-tools/oeedger8r/src/main\.ml
 tools/oesign/getopt\.h
 tools/oesign/getopt_long\.c
 tests/host_verify/data/.*

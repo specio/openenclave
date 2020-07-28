@@ -2,6 +2,9 @@
 // Licensed under the MIT License.
 
 #include "../calls.h"
+#include <openenclave/advanced/allocator.h>
+#include <openenclave/attestation/attester.h>
+#include <openenclave/attestation/verifier.h>
 #include <openenclave/bits/sgx/sgxtypes.h>
 #include <openenclave/corelibc/stdlib.h>
 #include <openenclave/corelibc/string.h>
@@ -21,11 +24,13 @@
 #include <openenclave/internal/sgx/td.h>
 #include <openenclave/internal/thread.h>
 #include <openenclave/internal/trace.h>
+#include <openenclave/internal/types.h>
 #include <openenclave/internal/utils.h>
+#include "../../../common/sgx/sgxmeasure.h"
 #include "../../sgx/report.h"
-#include "../arena.h"
 #include "../atexit.h"
 #include "../tracee.h"
+#include "arena.h"
 #include "asmdefs.h"
 #include "core_t.h"
 #include "cpuid.h"
@@ -420,6 +425,12 @@ static void _handle_ecall(
             /* Call all finalization functions */
             oe_call_fini_functions();
 
+            /* Cleanup attesters */
+            oe_attester_shutdown();
+
+            /* Cleanup verifiers */
+            oe_verifier_shutdown();
+
 #if defined(OE_USE_DEBUG_MALLOC)
 
             /* If memory still allocated, print a trace and return an error */
@@ -427,6 +438,9 @@ static void _handle_ecall(
                 result = OE_MEMORY_LEAK;
 
 #endif /* defined(OE_USE_DEBUG_MALLOC) */
+
+            /* Cleanup the allocator */
+            oe_allocator_cleanup();
 
             break;
         }
@@ -562,6 +576,7 @@ static void _exit_enclave(uint64_t arg1, uint64_t arg2)
 {
     static bool _initialized = false;
     static bool _stitch_ocall_stack = false;
+    oe_sgx_td_t* td = oe_sgx_get_td();
 
     // Since determining whether an enclave supports debugging is a stateless
     // idempotent operation, there is no need to lock. The result is cached
@@ -575,7 +590,6 @@ static void _exit_enclave(uint64_t arg1, uint64_t arg2)
 
     if (_stitch_ocall_stack)
     {
-        oe_sgx_td_t* td = oe_sgx_get_td();
         oe_ecall_context_t* host_ecall_context = td->host_ecall_context;
 
         // Make sure the context is valid.
@@ -591,7 +605,7 @@ static void _exit_enclave(uint64_t arg1, uint64_t arg2)
             host_ecall_context->debug_eexit_rip = frame[1];
         }
     }
-    oe_asm_exit(arg1, arg2);
+    oe_asm_exit(arg1, arg2, td);
 }
 
 /*

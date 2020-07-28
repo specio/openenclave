@@ -198,6 +198,11 @@ int test(
     strncpy(out_testname, __TEST__, STRLEN);
     out_testname[STRLEN - 1] = '\0';
 
+#ifdef CODE_COVERAGE
+    // Unregister the syscall hook when enabling code coverage testing.
+    oe_register_syscall_hook(NULL);
+#endif
+
     return return_value;
 }
 
@@ -224,7 +229,7 @@ void oe_handle_verify_report(uint64_t arg_in, uint64_t* arg_out)
 OE_SET_ENCLAVE_SGX(
     1,    /* ProductID */
     1,    /* SecurityVersion */
-    true, /* AllowDebug */
-    512,  /* HeapPageCount */
-    512,  /* StackPageCount */
-    2);   /* TCSCount */
+    true, /* Debug */
+    512,  /* NumHeapPages */
+    512,  /* NumStackPages */
+    2);   /* NumTCS */

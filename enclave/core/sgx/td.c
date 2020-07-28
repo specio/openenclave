@@ -13,12 +13,7 @@
 #include <openenclave/internal/utils.h>
 #include "asmdefs.h"
 #include "thread.h"
-
-#if __linux__
-#include "linux/threadlocal.h"
-#endif
-
-#define TD_FROM_TCS (5 * OE_PAGE_SIZE)
+#include "threadlocal.h"
 
 OE_STATIC_ASSERT(OE_OFFSETOF(oe_sgx_td_t, magic) == td_magic);
 OE_STATIC_ASSERT(OE_OFFSETOF(oe_sgx_td_t, depth) == td_depth);
@@ -41,12 +36,10 @@ OE_STATIC_ASSERT(
 
 // Static asserts for consistency with
 // debugger/pythonExtension/gdb_sgx_plugin.py
-#if defined(__linux__)
 OE_STATIC_ASSERT(td_callsites == 0xf0);
 OE_STATIC_ASSERT(OE_OFFSETOF(Callsite, ocall_context) == 0x40);
 OE_STATIC_ASSERT(TD_FROM_TCS == 0x5000);
 OE_STATIC_ASSERT(sizeof(oe_ocall_context_t) == (2 * sizeof(uintptr_t)));
-#endif
 
 /*
 **==============================================================================

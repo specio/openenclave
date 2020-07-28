@@ -240,6 +240,20 @@ static oe_tcb_level_status_t _parse_tcb_status(
         status.fields.qe_identity_out_of_date = 1;
         status.fields.configuration_needed = 1;
     }
+    // Due to sgx LVI update, UpToDate tcb would be marked as SWHardeningNeeded,
+    // as sgx cannot tell if enclave writer has implemented SW mitigations for
+    // LVI. Set status SWHardeningNeeded as up_to_date for now to make sure
+    // services for those tcbs are not affected.
+    else if (_json_str_equal(str, length, "SWHardeningNeeded"))
+    {
+        status.fields.up_to_date = 1;
+        status.fields.sw_hardening_needed = 1;
+    }
+    else if (_json_str_equal(str, length, "ConfigurationAndSWHardeningNeeded"))
+    {
+        status.fields.configuration_needed = 1;
+        status.fields.sw_hardening_needed = 1;
+    }
 
     return status;
 }
@@ -413,9 +427,11 @@ done:
  * but with different set of values). "tcbDate" : oe_datetime_t when TCB level
  * was certified not to be vulnerable. ISO 8601 standard(YYYY-MM-DDThh:mm:ssZ).
  *    "tcbStatus" : one of "UpToDate" or "OutOfDate" or "Revoked" or
- *                  "ConfigurationNeeded" or "OutOfDateConfigurationNeeded"
- *    "advisoryIDs" : array of strings describing vulnerabilities that this TCB
- * level is vulnerable to.  Example: ["INTEL-SA-00079", "INTEL-SA-00076"]
+ *                  "ConfigurationNeeded" or "OutOfDateConfigurationNeeded" or
+ *                  "SWHardeningNeeded" or "ConfigurationAndSWHardeningNeeded"
+ *    "advisoryIDs" :
+ * array of strings describing vulnerabilities that this TCB level is vulnerable
+ * to.  Example: ["INTEL-SA-00079", "INTEL-SA-00076"]
  * }
  */
 static oe_result_t _read_tcb_info_tcb_level_v2(
@@ -579,6 +595,14 @@ static oe_result_t _read_tcb_info(
         OE_TRACE_VERBOSE("V2: Reading tcbType");
         OE_CHECK(_read_property_name_and_colon("tcbType", itr, end));
         OE_CHECK(_read_integer(itr, end, &value));
+
+        // HW representation of CPUSVN for a given FMSPC is not architecturally
+        // defined to provide designers more flexibility. SW needs "tcbType" to
+        // determine how to decompose the CPUSVN. Each FMSPC has its own
+        // tcbType. For now, there is only one tcbType(0) has been defined.
+        if (value != 0)
+            OE_RAISE_MSG(
+                OE_JSON_INFO_PARSE_ERROR, "Unsupported tcbType(%d).", value);
         parsed_info->tcb_type = (uint32_t)value;
         OE_CHECK(_read(',', itr, end));
 
@@ -940,10 +964,12 @@ static void _determine_platform_qe_tcb_level(
  *    "tcb" : object of type tcb (Note: TCB Info has the same object, but with
  *            different set of values).
  *    "tcbDate" : oe_datetime_t when TCB level was certified not to be
- * vulnerable. ISO 8601 standard(YYYY-MM-DDThh:mm:ssZ). "tcbStatus" : one of
- * "UpToDate" or "OutOfDate" or "Revoked" or "ConfigurationNeeded" or
- * "OutOfDateConfigurationNeeded" "advisoryIDs" : array of strings describing
- * vulnerabilities that this TCB level is vulnerable to.  Example:
+ * vulnerable. ISO 8601 standard(YYYY-MM-DDThh:mm:ssZ).
+ *    "tcbStatus" : one of "UpToDate" or "OutOfDate" or "Revoked" or
+ * "ConfigurationNeeded" or "OutOfDateConfigurationNeeded" or
+ * "SWHardeningNeeded" or "ConfigurationAndSWHardeningNeeded"
+ *    "advisoryIDs" : array of strings describing vulnerabilities that this TCB
+ * level is vulnerable to.  Example:
  * ["INTEL-SA-00079", "INTEL-SA-00076"]
  * }
  */

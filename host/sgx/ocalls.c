@@ -99,6 +99,9 @@ void oe_sgx_thread_wake_wait_ocall(
 }
 
 oe_result_t oe_get_quote_ocall(
+    const oe_uuid_t* format_id,
+    const void* opt_params,
+    size_t opt_params_size,
     const sgx_report_t* sgx_report,
     void* quote,
     size_t quote_size,
@@ -106,15 +109,14 @@ oe_result_t oe_get_quote_ocall(
 {
     oe_result_t result;
 
-    result = sgx_get_quote(sgx_report, quote, &quote_size);
+    result = sgx_get_quote(
+        format_id, opt_params, opt_params_size, sgx_report, quote, &quote_size);
 
     if (quote_size_out)
         *quote_size_out = quote_size;
 
     return result;
 }
-
-#if defined(OE_LINK_SGX_DCAP_QL)
 
 /* Copy the source array to an output buffer. */
 static oe_result_t _copy_output_buffer(
@@ -145,6 +147,7 @@ done:
 
 oe_result_t oe_get_quote_verification_collateral_ocall(
     uint8_t fmspc[6],
+    uint8_t collateral_provider,
     void* tcb_info,
     size_t tcb_info_size,
     size_t* tcb_info_size_out,
@@ -174,6 +177,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
     /* fmspc */
     memcpy(args.fmspc, fmspc, sizeof(args.fmspc));
 
+    /* collateral_provider */
+    args.collateral_provider = collateral_provider;
+
     /* Populate the output fields. */
     OE_CHECK(oe_get_sgx_quote_verification_collateral(&args));
 
@@ -185,6 +191,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.tcb_info_size,
         &buffer_too_small));
 
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
+
     OE_CHECK(_copy_output_buffer(
         tcb_info_issuer_chain,
         tcb_info_issuer_chain_size,
@@ -192,6 +201,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.tcb_info_issuer_chain,
         args.tcb_info_issuer_chain_size,
         &buffer_too_small));
+
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
 
     OE_CHECK(_copy_output_buffer(
         pck_crl,
@@ -201,6 +213,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.pck_crl_size,
         &buffer_too_small));
 
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
+
     OE_CHECK(_copy_output_buffer(
         root_ca_crl,
         root_ca_crl_size,
@@ -208,6 +223,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.root_ca_crl,
         args.root_ca_crl_size,
         &buffer_too_small));
+
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
 
     OE_CHECK(_copy_output_buffer(
         pck_crl_issuer_chain,
@@ -217,6 +235,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.pck_crl_issuer_chain_size,
         &buffer_too_small));
 
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
+
     OE_CHECK(_copy_output_buffer(
         qe_identity,
         qe_identity_size,
@@ -224,6 +245,9 @@ oe_result_t oe_get_quote_verification_collateral_ocall(
         args.qe_identity,
         args.qe_identity_size,
         &buffer_too_small));
+
+    if (buffer_too_small)
+        OE_RAISE_NO_TRACE(OE_BUFFER_TOO_SMALL);
 
     OE_CHECK(_copy_output_buffer(
         qe_identity_issuer_chain,
@@ -245,63 +269,14 @@ done:
     return result;
 }
 
-#else /* !defined(OE_LINK_SGX_DCAP_QL) */
-
-oe_result_t oe_get_quote_verification_collateral_ocall(
-    uint8_t fmspc[6],
-    void* tcb_info,
-    size_t tcb_info_size,
-    size_t* tcb_info_size_out,
-    void* tcb_info_issuer_chain,
-    size_t tcb_info_issuer_chain_size,
-    size_t* tcb_info_issuer_chain_size_out,
-    void* pck_crl,
-    size_t pck_crl_size,
-    size_t* pck_crl_size_out,
-    void* root_ca_crl,
-    size_t root_ca_crl_size,
-    size_t* root_ca_crl_size_out,
-    void* pck_crl_issuer_chain,
-    size_t pck_crl_issuer_chain_size,
-    size_t* pck_crl_issuer_chain_size_out,
-    void* qe_identity,
-    size_t qe_identity_size,
-    size_t* qe_identity_size_out,
-    void* qe_identity_issuer_chain,
-    size_t qe_identity_issuer_chain_size,
-    size_t* qe_identity_issuer_chain_size_out)
+oe_result_t oe_get_qetarget_info_ocall(
+    const oe_uuid_t* format_id,
+    const void* opt_params,
+    size_t opt_params_size,
+    sgx_target_info_t* target_info)
 {
-    OE_UNUSED(fmspc);
-    OE_UNUSED(tcb_info);
-    OE_UNUSED(tcb_info_size);
-    OE_UNUSED(tcb_info_size_out);
-    OE_UNUSED(tcb_info_issuer_chain);
-    OE_UNUSED(tcb_info_issuer_chain_size);
-    OE_UNUSED(tcb_info_issuer_chain_size_out);
-    OE_UNUSED(pck_crl);
-    OE_UNUSED(pck_crl_size);
-    OE_UNUSED(pck_crl_size_out);
-    OE_UNUSED(root_ca_crl);
-    OE_UNUSED(root_ca_crl_size);
-    OE_UNUSED(root_ca_crl_size_out);
-    OE_UNUSED(pck_crl_issuer_chain);
-    OE_UNUSED(pck_crl_issuer_chain_size);
-    OE_UNUSED(pck_crl_issuer_chain_size_out);
-    OE_UNUSED(qe_identity);
-    OE_UNUSED(qe_identity_size);
-    OE_UNUSED(qe_identity_size_out);
-    OE_UNUSED(qe_identity_issuer_chain);
-    OE_UNUSED(qe_identity_issuer_chain_size);
-    OE_UNUSED(qe_identity_issuer_chain_size_out);
-
-    return OE_UNSUPPORTED;
-}
-
-#endif /* !defined(OE_LINK_SGX_DCAP_QL) */
-
-oe_result_t oe_get_qetarget_info_ocall(sgx_target_info_t* target_info)
-{
-    return sgx_get_qetarget_info(target_info);
+    return sgx_get_qetarget_info(
+        format_id, opt_params, opt_params_size, target_info);
 }
 
 static char** _backtrace_symbols(
@@ -424,6 +399,22 @@ done:
 
     if (strings)
         free(strings);
+
+    return result;
+}
+
+oe_result_t oe_get_supported_attester_format_ids_ocall(
+    void* format_ids,
+    size_t format_ids_size,
+    size_t* format_ids_size_out)
+{
+    oe_result_t result;
+
+    result =
+        sgx_get_supported_attester_format_ids(format_ids, &format_ids_size);
+
+    if (format_ids_size_out)
+        *format_ids_size_out = format_ids_size;
 
     return result;
 }
