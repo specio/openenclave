@@ -49,6 +49,7 @@ try {
                 parameters: [string(name: 'REPOSITORY_NAME', value: REPOSITORY_NAME),
                              string(name: 'BRANCH_NAME', value: BRANCH_NAME),
                              string(name: 'DOCKER_TAG', value: DOCKER_TAG),
+                             string(name: 'UBUNTU_SGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgx"]),
                              string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
                              booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
        },
