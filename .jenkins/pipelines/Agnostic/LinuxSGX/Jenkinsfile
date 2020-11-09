@@ -44,6 +44,31 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
     }
 }
 
+def sgx1Test(String version, String platform_mode, String build_type, String lvi_mitigation = 'None', String lvi_mitigation_skip_tests = 'OFF') {
+    def has_quote_provider = "OFF"
+    stage("clang-7 Ubuntu${version} ${platform_mode} ${build_type} LVI_MITIGATION=${lvi_mitigation}") {
+        node(AGENTS_LABELS["SGX1") {
+            timeout(GLOBAL_TIMEOUT_MINUTES) {
+                cleanWs()
+                checkout scm
+                    def task = """
+                               cmake ${WORKSPACE}                                            \
+                                    -G Ninja                                                 \
+                                    -DCMAKE_BUILD_TYPE=${build_type}                         \
+                                    -DHAS_QUOTE_PROVIDER=${has_quote_provider}               \
+                                    -DLVI_MITIGATION=${lvi_mitigation}                       \
+                                    -DLVI_MITIGATION_BINDIR=/usr/local/lvi-mitigation/bin    \
+                                    -DLVI_MITIGATION_SKIP_TESTS=${lvi_mitigation_skip_tests} \
+                                    -Wdev
+                               ninja -v
+                               ctest --output-on-failure --timeout ${CTEST_TIMEOUT_SECONDS}
+                               """
+                    oe.Run("clang-7", task)
+            }
+        }
+    }
+}
+
 def AArch64GNUTest(String version, String build_type) {
     stage("AArch64 GNU gcc Ubuntu${version} ${build_type}") {
         node(AGENTS_LABELS["ubuntu-sgx"]) {
@@ -117,8 +142,8 @@ try{
       stage("PR Testing") {
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
-                 "1804 clang-7 SGX1 Debug" :                            { simulationTest('18.04', 'SGX1', 'Debug', 'ON')},
-                 "1804 clang-7 SGX1 Release" :                          { simulationTest('18.04', 'SGX1', 'Release', 'ON')},
+                 "1804 clang-7 SGX1 Debug" :                            { sgx1Test('18.04', 'SGX1', 'Debug', 'ON')},
+                 "1804 clang-7 SGX1 Release" :                          { sgx1Test('18.04', 'SGX1', 'Release', 'ON')},
                  "1804 clang-7 SGX1-FLC Debug" :                        { simulationTest('18.04', 'SGX1FLC', 'Debug', 'ON')},
                  "1804 clang-7 SGX1-FLC Release" :                      { simulationTest('18.04', 'SGX1FLC', 'Release', 'ON')}
       }
