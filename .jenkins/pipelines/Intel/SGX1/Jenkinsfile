@@ -25,8 +25,8 @@ def sgx1Test(String version, String platform_mode, String build_type, String lvi
                                cmake ${WORKSPACE}                                            \
                                     -G Ninja                                                 \
                                     -DCMAKE_BUILD_TYPE=${build_type}                         \
-                                    -DHAS_QUOTE_PROVIDER=${has_quote_provider}               \
-                                    -DLVI_MITIGATION=${lvi_mitigation}                       \
+                                    -DHAS_QUOTE_PROVIDER=OFF                                 \
+                                    -DLVI_MITIGATION=ControlFlow                             \
                                     -DLVI_MITIGATION_BINDIR=/usr/local/lvi-mitigation/bin    \
                                     -DLVI_MITIGATION_SKIP_TESTS=${lvi_mitigation_skip_tests} \
                                     -Wdev
