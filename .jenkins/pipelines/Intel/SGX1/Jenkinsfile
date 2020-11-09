@@ -111,7 +111,7 @@ try{
         parallel "Check CI" :                                               { checkCI() },
                  "Check Developer Experience Ubuntu 18.04" :                { checkDevFlows('18.04') },
                  "1804 clang-7 SGX1 Debug" :                            { sgx1Test('18.04', 'SGX1', 'Debug')},
-                 "1804 clang-7 SGX1 Release" :                          { sgx1Test('18.04', 'SGX1', 'Release')},
+                 "1804 clang-7 SGX1 Release" :                          { sgx1Test('18.04', 'SGX1', 'Release')}
       }
     }
 } catch(Exception e) {
