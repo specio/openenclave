@@ -17,6 +17,7 @@ AGENTS_LABELS = [
     "acc-ubuntu-16.04": env.UBUNTU_1604_CUSTOM_LABEL ?: "ACC-1604",
     "acc-ubuntu-18.04": env.UBUNTU_1804_CUSTOM_LABEL ?: "ACC-1804",
     "ubuntu-sgx":    env.UBUNTU_SGX_CUSTOM_LABEL ?: "UBUNTU-SGX1",
+    "ubuntu-sgxflc":    env.UBUNTU_SGX_CUSTOM_LABEL ?: "UBUNTU-SGXFLC",
     "ubuntu-nonsgx":    env.UBUNTU_NONSGX_CUSTOM_LABEL ?: "nonSGX",
     "acc-rhel-8":       env.RHEL_8_CUSTOM_LABEL ?: "ACC-RHEL-8",
     "acc-win2016":      env.WINDOWS_2016_CUSTOM_LABEL ?: "SGX-Windows-2016",
@@ -40,7 +41,7 @@ try {
                 parameters: [string(name: 'REPOSITORY_NAME', value: REPOSITORY_NAME),
                              string(name: 'BRANCH_NAME', value: BRANCH_NAME),
                              string(name: 'DOCKER_TAG', value: DOCKER_TAG),
-                             string(name: 'UBUNTU_NONSGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgx"]),
+                             string(name: 'UBUNTU_SGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgx"]),
                              string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
                              booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
        },
@@ -49,6 +50,16 @@ try {
                 parameters: [string(name: 'REPOSITORY_NAME', value: REPOSITORY_NAME),
                              string(name: 'BRANCH_NAME', value: BRANCH_NAME),
                              string(name: 'DOCKER_TAG', value: DOCKER_TAG),
+                             string(name: 'UBUNTU_SGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgx"]),
+                             string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
+                             booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
+       },
+        "Agnostic SGX-FLC Linux" : {
+          build job: '/pipelines/Agnostic-SGX-FLC-Linux',
+                parameters: [string(name: 'REPOSITORY_NAME', value: REPOSITORY_NAME),
+                             string(name: 'BRANCH_NAME', value: BRANCH_NAME),
+                             string(name: 'DOCKER_TAG', value: DOCKER_TAG),
+                             string(name: 'UBUNTU_SGX_CUSTOM_LABEL', value: AGENTS_LABELS["ubuntu-sgxflc"]),
                              string(name: 'OECI_LIB_VERSION', value: OECI_LIB_VERSION),
                              booleanParam(name: 'FULL_TEST_SUITE',value: FULL_TEST_SUITE)]
        },
