@@ -22,7 +22,7 @@ def simulationTest(String version, String platform_mode, String build_type, Stri
         has_quote_provider = "ON"    
     }
     stage("clang-7 Ubuntu${version} ${platform_mode} ${build_type} LVI_MITIGATION=${lvi_mitigation}") {
-        node( AGENTS_LABELS["SGX1"]) {
+        node( AGENTS_LABELS[platform_mode]) {
             timeout(GLOBAL_TIMEOUT_MINUTES) {
                 cleanWs()
                 checkout scm
