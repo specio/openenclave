@@ -4,8 +4,9 @@ pipeline {
     stages {
         def jenkinsFile
         stage('Loading Jenkins file') {
-            jenkinsFile = fileLoader.load('SGX1/Jenkinsfile')
+            jenkinsFile = /SGX1/Jenkinsfile
         }
+        load jenkinsFile
         stage('stage one') {
             steps {
                 script {
