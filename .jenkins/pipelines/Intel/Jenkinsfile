@@ -2,6 +2,10 @@
 pipeline {
     agent { node { label 'UBUNTU-SGX1' } }
     stages {
+        def jenkinsFile
+        stage('Loading Jenkins file') {
+            jenkinsFile = fileLoader.load('SGX1/Jenkinsfile')
+        }
         stage('stage one') {
             steps {
                 script {
