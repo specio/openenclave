@@ -1,11 +1,8 @@
 #!/usr/bin/env groovy
-pipeline {
-    agent { node { 
-        label 'UBUNTU-SGX1' 
-        def jenkinsFile
-        stage('Loading Jenkins file') {            
-            jenkinsFile = /SGX1/Jenkinsfile    
-        }
-        load jenkinsFile
-    } }
+node {
+   stage("Determine build file") {
+      String jenkinsFile = .jenkins/pipelines/Intel/SGX1/Jenkinsfile
+   }
+   // Here the Jenkins build file is loaded and executed
+   load jenkinsFile
 }
