@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 node {
    stage("Determine build file") {
-      String jenkinsFile = '.jenkins/pipelines/Intel/SGX1/Jenkinsfile'
+      String jenkinsFile = /SGX1/Jenkinsfile
    }
    // Here the Jenkins build file is loaded and executed
    load jenkinsFile
