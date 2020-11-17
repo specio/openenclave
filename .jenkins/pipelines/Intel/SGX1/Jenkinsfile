@@ -39,28 +39,6 @@ def sgx1Test(String version, String platform_mode, String build_type, String lvi
     }
 }
 
-def AArch64GNUTest(String version, String build_type) {
-    stage("AArch64 GNU gcc Ubuntu${version} ${build_type}") {
-        node(AGENTS_LABELS["ubuntu-sgx"]) {
-            timeout(GLOBAL_TIMEOUT_MINUTES) {
-                cleanWs()
-                checkout scm
-                def task = """
-                            cmake ${WORKSPACE}                                                     \
-                                -G Ninja                                                           \
-                                -DCMAKE_BUILD_TYPE=${build_type}                                   \
-                                -DCMAKE_TOOLCHAIN_FILE=${WORKSPACE}/cmake/arm-cross.cmake          \
-                                -DOE_TA_DEV_KIT_DIR=/devkits/vexpress-qemu_armv8a/export-ta_arm64  \
-                                -DHAS_QUOTE_PROVIDER=OFF                                           \
-                                -Wdev
-                            ninja -v
-                            """
-                oe.Run("cross", task)
-            }
-        }
-    }
-}
-
 def checkDevFlows(String version) {
     stage('Default compiler') {
         node(AGENTS_LABELS["ubuntu-sgx"]) {
