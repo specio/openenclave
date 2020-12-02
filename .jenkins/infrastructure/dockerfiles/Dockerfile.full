@@ -90,6 +90,7 @@ RUN echo proxxxxy: $http_proxy && \
     cat /etc/sgx_default_qcnl.conf && \
     curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash && \
     apt-get install -y nodejs && \
+    mkdir /etc/init 2>/dev/null && \
     npm install pm2 -g && \
     echo "N" |  sudo apt install sgx-dcap-pccs -y && \
     sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
