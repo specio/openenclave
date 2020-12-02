@@ -102,5 +102,5 @@ RUN echo proxxxxy: $http_proxy && \
     sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
     sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
     cd $sslDir/.. && \
-    pm2 start ./pccs_server.config.js && \
+    pm2 start ./pccs_server.js && \
     pm2 save
