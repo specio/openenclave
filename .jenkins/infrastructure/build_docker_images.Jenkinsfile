@@ -26,6 +26,7 @@ def buildDockerImages() {
             }
             */
             stage("Build Ubuntu 18.04 SGX1-LLC Full Docker Image") {
+                echo "current build number: ${currentBuild.number}"
                 oesgx1llcfull1804 = oe.dockerImage("oetools-sgx1-llc-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
                 //puboesgx1llcfull1804 = oe.dockerImage("oeciteam/oetools-sgx1-llc-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
             }
