@@ -73,6 +73,9 @@ RUN echo proxxxxy: $http_proxy && \
     sudo ./install-ansible.sh && \
     sudo ansible-playbook ./oe-contributors-setup-sgx1.yml -vvvv && \
     ./remove-ansible.sh && \
+    sudo apt-get -y install libsgx-launch libsgx-urts && \
+    sudo apt-get -y install libsgx-epid libsgx-urts && \
+    sudo apt-get -y install libsgx-quote-ex libsgx-urts && \
     cd / && \
     rm -rf /oe && \
     cat /etc/sudoers && \
