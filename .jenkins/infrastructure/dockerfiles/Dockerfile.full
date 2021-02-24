@@ -85,7 +85,7 @@ RUN echo proxxxxy: $http_proxy && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     apt install libsgx-dcap-default-qpl && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
-    ln -s /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so.1.7.100.2 /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
+    ln -s /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so.1.9.100.3 /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
     sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
     cat /etc/sgx_default_qcnl.conf && \
     curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash && \
