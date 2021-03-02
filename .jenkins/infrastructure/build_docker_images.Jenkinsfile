@@ -30,11 +30,12 @@ def buildDockerImages() {
                 oesgx1llcfull1804 = oe.dockerImage("oetools-sgx1-llc-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
                 //puboesgx1llcfull1804 = oe.dockerImage("oeciteam/oetools-sgx1-llc-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
             }
-            /*
+            
             stage("Build Ubuntu 18.04 Full Docker Image") {
                 oefull1804 = oe.dockerImage("oetools-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
                 puboefull1804 = oe.dockerImage("oeciteam/oetools-full-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.full", "${buildArgs} --build-arg ubuntu_version=18.04 --build-arg devkits_uri=${DEVKITS_URI}")
             }
+            /*
             stage("Build Ubuntu 18.04 Minimal Docker image") {
                 oeminimal1804 = oe.dockerImage("oetools-minimal-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.minimal", "${buildArgs} --build-arg ubuntu_version=18.04")
                 puboeminimal1804 = oe.dockerImage("oeciteam/oetools-minimal-18.04:${DOCKER_TAG}", ".jenkins/infrastructure/dockerfiles/Dockerfile.minimal", "${buildArgs} --build-arg ubuntu_version=18.04")
@@ -47,13 +48,13 @@ def buildDockerImages() {
             stage("Push to OE Docker Registry") {
                 docker.withRegistry(OETOOLS_REPO) {
                     //oe.exec_with_retry { oefull1604.push() }
-                    //oe.exec_with_retry { oefull1804.push() }
+                    oe.exec_with_retry { oefull1804.push() }
                     oe.exec_with_retry { oesgx1llcfull1804.push() }
                     //oe.exec_with_retry { oeminimal1804.push() }
                     //oe.exec_with_retry { oeDeploy.push() }
                     if(TAG_LATEST == "true") {
                         //oe.exec_with_retry { oefull1604.push('latest') }
-                        //oe.exec_with_retry { oefull1804.push('latest') }
+                        oe.exec_with_retry { oefull1804.push('latest') }
                         oe.exec_with_retry { oesgx1llcfull1804.push('latest') }
                         //oe.exec_with_retry { oeminimal1804.push('latest') }
                         //oe.exec_with_retry { oeDeploy.push('latest') }
