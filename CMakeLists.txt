@@ -30,12 +30,6 @@ elseif (WIN32)
   set(OE_ASM ASM_MASM)
 endif ()
 
-# Set compiler search order to prefer Clang
-# This has to be done before `project`
-# http://cmake.3232098.n2.nabble.com/Prefer-clang-over-gcc-td7597742.html
-set(CMAKE_C_COMPILER_NAMES clang-7 cc)
-set(CMAKE_CXX_COMPILER_NAMES clang++-7 c++)
-
 # Will be overwritten during the cmake initialization.
 set(LVI_MITIGATION
     "None"
@@ -43,14 +37,28 @@ set(LVI_MITIGATION
 set(LVI_MITIGATION_BINDIR
     "None"
     CACHE STRING "Path to the LVI mitigation bindir.")
-# On Unix, configuring cmake to adopt the customized compilation toolchain for LVI mitigation.
-# Note that this has be done before `project`.
-if (UNIX AND LVI_MITIGATION MATCHES ControlFlow)
-  if (${LVI_MITIGATION_BINDIR} MATCHES None)
-    message(FATAL_ERROR "LVI_MITIGATION_BINDIR is not specified.")
+
+# On Unix, configuring cmake to use the preferred compiler.
+# Note that this must be done before the `project` command.
+if (UNIX)
+  if (LVI_MITIGATION MATCHES ControlFlow)
+    # If the LVI mitigation is enabled, use the customized compilation toolchain.
+    if (${LVI_MITIGATION_BINDIR} MATCHES None)
+      message(FATAL_ERROR "LVI_MITIGATION_BINDIR is not specified.")
+    endif ()
+    include(configure_lvi_mitigation_build)
+    configure_lvi_mitigation_build(BINDIR ${LVI_MITIGATION_BINDIR})
+  else ()
+    # For the normal build, if the CC environment variable has been specified or if
+    # the CMAKE_C_COMPILER cmake variable has been passed to cmake, use the C compiler
+    # that has been specified. Otherwise, prefer clang. Same for C++ compiler.
+    if (NOT DEFINED ENV{CC} AND NOT DEFINED CMAKE_C_COMPILER)
+      find_program(CMAKE_C_COMPILER clang-8 clang)
+    endif ()
+    if (NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER)
+      find_program(CMAKE_CXX_COMPILER clang++-8 clang++)
+    endif ()
   endif ()
-  include(configure_lvi_mitigation_build)
-  configure_lvi_mitigation_build(BINDIR ${LVI_MITIGATION_BINDIR})
 endif ()
 
 project(
@@ -422,15 +430,18 @@ if (WIN32)
           DESTINATION ${CMAKE_INSTALL_BINDIR}/scripts/)
   install(FILES ./scripts/install-windows-prereqs.ps1
           DESTINATION ${CMAKE_INSTALL_BINDIR}/scripts/)
-  install(FILES ./cmake/maybe_build_using_clangw.cmake
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
-          COMPONENT OEHOSTVERIFY)
-  install(FILES ./cmake/add_dcap_client_target.cmake
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
-          COMPONENT OEHOSTVERIFY)
-  install(FILES ./cmake/copy_oedebugrt_target.cmake
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
-          COMPONENT OEHOSTVERIFY)
+  install(
+    FILES ./cmake/maybe_build_using_clangw.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
+    COMPONENT OEHOSTVERIFY)
+  install(
+    FILES ./cmake/add_dcap_client_target.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
+    COMPONENT OEHOSTVERIFY)
+  install(
+    FILES ./cmake/copy_oedebugrt_target.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/openenclave/cmake
+    COMPONENT OEHOSTVERIFY)
 endif ()
 
 # Install necessary files for LVI mitigation.

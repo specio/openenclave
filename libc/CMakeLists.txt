@@ -39,7 +39,7 @@ endif ()
 maybe_build_using_clangw(oelibasm)
 
 # CMake unconditionally adds `-DNDEBUG` etc. as flags even when
-# assembling, and clang-7 errors because we treat warnings as errors.
+# assembling, and clang errors because we treat warnings as errors.
 # So we move the assembly code into a fake library, turn off the
 # error, and then inject the objects into the actual library.
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR USE_CLANGW)
@@ -782,6 +782,7 @@ add_enclave_library(
   ${MUSLSRC}/unistd/close.c
   ${MUSLSRC}/unistd/fdatasync.c
   ${MUSLSRC}/unistd/fsync.c
+  ${MUSLSRC}/unistd/ftruncate.c
   ${MUSLSRC}/unistd/getgid.c
   ${MUSLSRC}/unistd/getegid.c
   ${MUSLSRC}/unistd/getuid.c
