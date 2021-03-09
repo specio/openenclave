@@ -83,7 +83,10 @@ RUN echo proxxxxy: $http_proxy && \
     ####
     apt install libsgx-dcap-default-qpl && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
-    ln -s /usr/lib/x86_64-linux-gnu/$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
+    libAddr=$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") && \
+    echo LAddr: $libAddr && \
+    ln -s /usr/lib/x86_64-linux-gnu/$libAddr /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
+    ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     ll /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
     cat /etc/sgx_default_qcnl.conf && \
