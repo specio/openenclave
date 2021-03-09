@@ -24,7 +24,7 @@ def buildDockerImages() {
             }
             
             stage("Build Ubuntu 18.04 Full Docker Image") {
-                echo "current build number: ${currentBuild.number}"
+                echo "Current image: oetools-full-18.04:1.${currentBuild.number}"
                 oefull1804 = oe.dockerImage("oetools-full-18.04:1.${currentBuild.number}", ".jenkins/infrastructure/dockerfiles/Dockerfile.full", "${buildArgs} --build-arg ubuntu_version=18.04")
             }
             stage("Push to OE Docker Registry") {
