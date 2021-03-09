@@ -87,7 +87,7 @@ RUN echo proxxxxy: $http_proxy && \
     echo LAddr: $libAddr && \
     ln -s /usr/lib/x86_64-linux-gnu/$libAddr /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
-    ll /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
+    ls -la /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
     cat /etc/sgx_default_qcnl.conf && \
     curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash && \
