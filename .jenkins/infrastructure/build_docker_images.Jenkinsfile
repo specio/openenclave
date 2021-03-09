@@ -20,7 +20,7 @@ def buildDockerImages() {
                                                   "GID=\$(id -g)", "GNAME=\$(id -gn)")
             stage("Build Ubuntu 18.04 SGX1-LLC Full Docker Image") {
                 echo "Current image: oetools-sgx1-llc-full-18.04:1.${currentBuild.number}"
-                //oesgx1llcfull1804 = oe.dockerImage("oetools-sgx1-llc-full-18.04:1.${currentBuild.number}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04")
+                oesgx1llcfull1804 = oe.dockerImage("oetools-sgx1-llc-full-18.04:1.${currentBuild.number}", ".jenkins/infrastructure/dockerfiles/Dockerfile.SGX1-LLC.full", "${buildArgs} --build-arg ubuntu_version=18.04")
             }
             
             stage("Build Ubuntu 18.04 Full Docker Image") {
@@ -30,10 +30,10 @@ def buildDockerImages() {
             stage("Push to OE Docker Registry") {
                 docker.withRegistry(OETOOLS_REPO) {
                     oe.exec_with_retry { oefull1804.push() }
-                    //oe.exec_with_retry { oesgx1llcfull1804.push() }
+                    oe.exec_with_retry { oesgx1llcfull1804.push() }
                     if(TAG_LATEST == "true") {
                         oe.exec_with_retry { oefull1804.push('latest') }
-                       // oe.exec_with_retry { oesgx1llcfull1804.push('latest') }
+                        oe.exec_with_retry { oesgx1llcfull1804.push('latest') }
                     }
                 }
             }
