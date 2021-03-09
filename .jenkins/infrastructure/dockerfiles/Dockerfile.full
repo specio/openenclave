@@ -57,7 +57,6 @@ ARG GID=1000
 
 COPY ./ /oe
 
-#ARG devkits_uri
 RUN whoami && \
     pwd && \
     echo "http_proxy=http://proxy-mu.intel.com:911/" >> /etc/environment && \
@@ -74,15 +73,14 @@ RUN echo proxxxxy: $http_proxy && \
     sudo ./install-ansible.sh && \
     sudo ansible-playbook ./oe-contributors-setup.yml -vvvv && \
     ./remove-ansible.sh && \
+    #sudo apt-get -y install libsgx-launch libsgx-urts && \
+    #sudo apt-get -y install libsgx-epid libsgx-urts && \
+    #sudo apt-get -y install libsgx-quote-ex libsgx-urts && \
     cd / && \
     rm -rf /oe && \
-    # Configure Git in target image to enable merge/rebase actions.
-    #git config --global user.email "oeciteam@microsoft.com" && \
-    #git config --global user.name "OE CI Team" && \
-    #curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner && \
-    #echo ${devkits_uri##*/} > /devkits/TARBALL && \
     cat /etc/sudoers && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    ####
     apt install libsgx-dcap-default-qpl && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     ln -s /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so.1.9.100.3 /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
