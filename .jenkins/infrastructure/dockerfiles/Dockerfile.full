@@ -109,4 +109,5 @@ RUN echo proxxxxy: $http_proxy && \
     pm2 start ./pccs_server.js && \
     pm2 save && \
     sleep 15 && \
-    pm2 status
+    pm2 status && \
+    pm2 logs --lines 50
