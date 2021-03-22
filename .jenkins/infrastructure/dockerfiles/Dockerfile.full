@@ -90,10 +90,11 @@ RUN echo proxxxxy: $http_proxy && \
     ls -la /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
     cat /etc/sgx_default_qcnl.conf && \
-    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash && \
+    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && \
     apt-get install -y nodejs && \
     mkdir /etc/init -p && \
     npm install pm2 -g && \
+    pm2 status && \
     { echo Y; echo N; } | sudo apt install sgx-dcap-pccs -y && \
     sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
     mkdir $sslDir && \
