@@ -1,0 +1,112 @@
+# Copyright (c) Open Enclave SDK contributors.
+# Licensed under the MIT License.
+
+#
+# IMPORTANT- Please update the version number in the next sentence
+# when you create a new docker image.
+#
+# This Dockerfile script builds an image for tag oetools-full-18.04:0.8
+
+# To use this Dockerfile, you will need to install docker-ce.
+# Instructions for installing it on Ubuntu 16.04 LTS are at:
+# https://docs.docker.com/install/linux/docker-ce/ubuntu/
+#
+# Once installed, build a docker image from .jenkins folder and
+# it will use this Dockerfile by default:
+#     openenclave$ sudo docker build --no-cache=true --build-arg ubuntu_version=<ubuntu_version> --build-arg devkits_uri=<devkits_uri> -t oetools-full-<ubuntu_version>:<version> -f .jenkins/Dockerfile.full .
+#
+# For example, for version 1.x with Ubuntu 18.04 :
+#     openenclave$ sudo docker build \
+#         --no-cache=true \
+#         --build-arg ubuntu_version=18.04 \
+#         --build-arg devkits_uri=https://tcpsbuild.blob.core.windows.net/tcsp-build/OE-CI-devkits-dd4c992d.tar.gz \
+#         -t oetools-full-18.04:1.x \
+#         -f .jenkins/Dockerfile.full \
+#         .
+#
+# Note that DNS forwarding in a VM can interfere with Docker
+# getting updates from Ubuntu apt-get repositories as part of the
+# Dockerfile script. To work around this, try disabling dnsmasq:
+#     $ sudo nano /etc/NetworkManager/NetworkManager.conf
+#     $ sudo service network-manager restart
+#     $ sudo service docker restart
+#
+# To view the image after it is created or tagged:
+#     $ sudo docker image ls
+#
+# Jenkins pulls the images it uses from the private oejenkinscidockerregistry
+# repository on Azure. To upload the image to that repository:
+#     $ sudo docker login oejenkinscidockerregistry.azurecr.io
+#     $ sudo docker tag oetools-full-<ubuntu_version>:<version> oejenkinscidockerregistry.azurecr.io/oetools-full-<ubuntu_version>:<version>
+#     $ sudo docker push oejenkinscidockerregistry.azurecr.io/oetools-full-<ubuntu_version>:<version>
+#     $ sudo docker logout
+#
+# You can check that the image has been successfully uploaded by checking
+# the oejenkinscidockerregistry Container registry in Azure at this link,
+# assuming you have proper permissions:
+# https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/e5839dfd-61f0-4b2f-b06f-de7fc47b5998/resourceGroups/OE-Jenkins-CI/providers/Microsoft.ContainerRegistry/registries/oejenkinscidockerregistry/overview
+
+ARG ubuntu_version=18.04
+
+FROM ubuntu:${ubuntu_version}
+
+ARG UNAME=jenkins
+ARG GNAME=jenkins
+ARG UID=1000
+ARG GID=1000
+
+COPY ./ /oe
+
+RUN whoami && \
+    pwd && \
+    echo "http_proxy=http://proxy-mu.intel.com:911/" >> /etc/environment && \
+    echo "https_proxy=http://proxy-mu.intel.com:912/" >> /etc/environment
+RUN echo proxxxxy: $http_proxy && \
+    export http_proxy=http://proxy-mu.intel.com:911 && \
+    export https_proxy=http://proxy-mu.intel.com:912 && \
+    apt update && \
+    apt upgrade -y && \
+    apt install -y linux-headers-$(uname -r) && \
+    apt install sudo -y && \
+    getent group && \
+    cd /oe/scripts/ansible && \
+    sudo ./install-ansible.sh && \
+    sudo ansible-playbook ./oe-contributors-setup.yml -vvvv && \
+    ./remove-ansible.sh && \
+    #sudo apt-get -y install libsgx-launch libsgx-urts && \
+    #sudo apt-get -y install libsgx-epid libsgx-urts && \
+    #sudo apt-get -y install libsgx-quote-ex libsgx-urts && \
+    cd / && \
+    rm -rf /oe && \
+    cat /etc/sudoers && \
+    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    ####
+    apt install libsgx-dcap-default-qpl && \
+    ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
+    libAddr=$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") && \
+    echo LAddr: $libAddr && \
+    ln -s /usr/lib/x86_64-linux-gnu/$libAddr /usr/lib/x86_64-linux-gnu/libdcap_quoteprov.so && \
+    ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
+    ls -la /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
+    sed -i 's/^USE_SECURE_CERT=TRUE/USE_SECURE_CERT=FALSE/g' /etc/sgx_default_qcnl.conf && \
+    cat /etc/sgx_default_qcnl.conf && \
+    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && \
+    apt-get install -y nodejs && \
+    mkdir /etc/init -p && \
+    npm install pm2 -g && \
+    pm2 status && \
+    { echo Y; echo N; } | sudo apt install sgx-dcap-pccs -y && \
+    sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
+    mkdir $sslDir && \
+    openssl genrsa -out $sslDir/private.pem 1024 && \
+    sudo openssl req -new -subj "/C=PL/ST=POM/L=GDA/O=INTEL/OU=S3/CN=OE" -key $sslDir/private.pem -out $sslDir/csr.pem && \
+    sudo openssl x509 -req -days 365 -in $sslDir/csr.pem -signkey $sslDir/private.pem -out $sslDir/file.crt && \
+    sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    cd $sslDir/.. && \
+    pm2 start ./pccs_server.js && \
+    pm2 save && \
+    sleep 15 && \
+    pm2 status
