@@ -71,7 +71,7 @@ RUN echo proxxxxy: $http_proxy && \
     getent group && \
     cd /oe/scripts/ansible && \
     sudo ./install-ansible.sh && \
-    sudo ansible-playbook ./oe-contributors-setup.yml -vvvv && \
+    sudo ansible-playbook ./oe-contributors-setup.1.10.yml -vvvv && \
     ./remove-ansible.sh && \
     #sudo apt-get -y install libsgx-launch libsgx-urts && \
     #sudo apt-get -y install libsgx-epid libsgx-urts && \
@@ -81,7 +81,7 @@ RUN echo proxxxxy: $http_proxy && \
     cat /etc/sudoers && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     ####
-    apt install libsgx-dcap-default-qpl=1.7.100.2-bionic1 && \
+    apt install libsgx-dcap-default-qpl && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     libAddr=$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") && \
     echo LAddr: $libAddr && \
@@ -95,18 +95,18 @@ RUN echo proxxxxy: $http_proxy && \
     mkdir /etc/init -p && \
     npm install pm2 -g && \
     pm2 status && \
-    echo "N" | sudo apt install sgx-dcap-pccs=1.7.100.2-bionic1 -y && \
+    { echo Y; echo N; } | sudo apt install sgx-dcap-pccs -y && \
     sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
     mkdir $sslDir && \
     openssl genrsa -out $sslDir/private.pem 1024 && \
     sudo openssl req -new -subj "/C=PL/ST=POM/L=GDA/O=INTEL/OU=S3/CN=OE" -key $sslDir/private.pem -out $sslDir/csr.pem && \
     sudo openssl x509 -req -days 365 -in $sslDir/csr.pem -signkey $sslDir/private.pem -out $sslDir/file.crt && \
-    sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-    sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-    sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+    sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+    sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
     cd $sslDir/.. && \
-    #pm2 start ./pccs_server.js && \
+    pm2 start ./pccs_server.js && \
     pm2 save && \
     sleep 15 && \
     pm2 status
