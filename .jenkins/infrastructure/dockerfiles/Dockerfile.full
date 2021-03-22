@@ -81,7 +81,7 @@ RUN echo proxxxxy: $http_proxy && \
     cat /etc/sudoers && \
     echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     ####
-    apt install libsgx-dcap-default-qpl && \
+    apt install libsgx-dcap-default-qpl=1.7.100.2-bionic1 && \
     ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
     libAddr=$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") && \
     echo LAddr: $libAddr && \
