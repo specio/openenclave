@@ -87,7 +87,7 @@ RUN echo proxxxxy: $http_proxy && \
 	echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list && \
 	wget -qO - https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key | sudo apt-key add  - && \
 	sudo apt-get update && \
-	sudo apt-get install libsgx-urts libsgx-dcap-ql=1.6.100.2-bionic1 libsgx-dcap-default-qpl=1.6.100.2-bionic1 -y  --allow-downgrades && \
+	sudo apt-get install libsgx-quote-ex libsgx-urts libsgx-dcap-ql=1.6.100.2-bionic1 libsgx-dcap-default-qpl=1.6.100.2-bionic1 -y  --allow-downgrades && \
 	ls /usr/lib/x86_64-linux-gnu | grep "quoteprov" && \
 	libAddr=$(ls /usr/lib/x86_64-linux-gnu | grep "quoteprov.so.1.") && \
 	echo LAddr: $libAddr && \
