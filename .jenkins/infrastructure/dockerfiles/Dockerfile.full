@@ -109,5 +109,5 @@ RUN echo proxxxxy: $http_proxy && \
 	pm2 status && \
 	pm2 restart pccs && \
 	sleep 15 && \
-	pm2 status
+	pm2 status && \
 	pm2 save
