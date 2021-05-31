@@ -129,9 +129,9 @@ int main(int argc, const char* argv[])
     }
 
     const uint32_t flags = oe_get_create_flags();
-    if ((flags & OE_ENCLAVE_FLAG_SIMULATE) != 0)
+    if ((flags & OE_ENCLAVE_FLAG_SIMULATE) != 0 & !oe_has_sgx_quote_provider())
     {
-        printf("=== Skipped unsupported test in simulation mode "
+        printf("=== Skipped unsupported test by non-FLC platform or simulation mode "
                "(debug)\n");
         return SKIP_RETURN_CODE;
     }
