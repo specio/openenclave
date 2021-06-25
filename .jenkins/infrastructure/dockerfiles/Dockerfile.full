@@ -92,7 +92,7 @@ RUN echo proxxxxy: $http_proxy && \
     apt-get install -y nodejs && \
     mkdir /etc/init -p && \
     npm install pm2 -g && \
-    echo "N" |  sudo apt install sgx-dcap-pccs -y && \
+    echo "Y" | echo "N" |  sudo apt install sgx-dcap-pccs -y && \
     sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
     mkdir $sslDir && \
     openssl genrsa -out $sslDir/private.pem 1024 && \
