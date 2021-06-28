@@ -98,7 +98,7 @@ RUN echo proxxxxy: $http_proxy && \
 	sed -i 's/v3/v2/g' /etc/sgx_default_qcnl.conf && \
 	cat /etc/sgx_default_qcnl.conf && \
 	sudo apt install systemd -y && \
-	DEBIAN_FRONTEND=noninteractive apt-get -q -y install sgx-dcap-pccs && \
+	DEBIAN_FRONTEND=noninteractive apt-get -q -y install sgx-dcap-pccs=1.8.100.2-bionic1 && \
 	sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
 	mkdir $sslDir && \
 	openssl genrsa -out $sslDir/private.pem 1024 && \
