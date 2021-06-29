@@ -98,17 +98,26 @@ RUN echo proxxxxy: $http_proxy && \
 	sed -i 's/v3/v2/g' /etc/sgx_default_qcnl.conf && \
 	cat /etc/sgx_default_qcnl.conf && \
 	sudo apt install systemd -y && \
-	DEBIAN_FRONTEND=noninteractive apt-get -q -y install sgx-dcap-pccs=1.8.100.2-bionic1 && \
+	sudo apt install git -y && \
+	npm install pm2 -g && \
+	cd /opt/intel && \
+	git clone -b dcap_1.10_reproducible https://github.com/intel/SGXDataCenterAttestationPrimitives.git && \
+	cd /opt/intel/SGXDataCenterAttestationPrimitives/tools/PCKCertSelection && \
+	make && \
+	mv /opt/intel/SGXDataCenterAttestationPrimitives/QuoteGeneration/pccs /opt/intel/sgx-dcap-pccs && \
+	mkdir /opt/intel/sgx-dcap-pccs/lib && \
+	cp /opt/intel/SGXDataCenterAttestationPrimitives/tools/PCKCertSelection/out/libPCKCertSelection.so /opt/intel/sgx-dcap-pccs/lib && \
+	cd /opt/intel/sgx-dcap-pccs && \
+	echo "N" | sudo /opt/intel/sgx-dcap-pccs/install.sh  && \
 	sslDir=/opt/intel/sgx-dcap-pccs/ssl_key && \
 	mkdir $sslDir && \
 	openssl genrsa -out $sslDir/private.pem 1024 && \
 	sudo openssl req -new -subj "/C=PL/ST=POM/L=GDA/O=INTEL/OU=S3/CN=OE" -key $sslDir/private.pem -out $sslDir/csr.pem && \
 	sudo openssl x509 -req -days 365 -in $sslDir/csr.pem -signkey $sslDir/private.pem -out $sslDir/file.crt && \
-	sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-	sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-	sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
-	sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/production-0.json && \
+	sed -i 's/^    "ApiKey": ""/    "ApiKey": "48a5aca9f18f4ae8b0fa896335f9fbd3"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+	sed -i 's/^    "proxy" : ""/    "proxy" : "http:\/\/proxy-mu.intel.com:912\/"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+	sed -i 's/^    "UserToken" : ""/    "UserToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
+	sed -i 's/^    "AdminToken" : ""/    "AdminToken" : "48fb10b15f3d44a09dc82d02b06581e0c0c69478c9fd2cf8f9093659019a1687baecdbb38c9e72b12169dc4148690f87467f9154f5931c5df665c6496cbfd5f5"/g' /opt/intel/sgx-dcap-pccs/config/default.json && \
 	echo "N" | sudo /opt/intel/sgx-dcap-pccs/install.sh && \
-	pm2 save && \
-	sleep 15 && \
-	pm2 status
+	node -r esm pccs_server.js & && \
+	curl --noproxy "*" -v -k -G "https://localhost:8081/sgx/certification/v2/rootcacrl"
